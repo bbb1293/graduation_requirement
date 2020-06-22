@@ -91,6 +91,33 @@ def classify_my_course(my_course_index):
 
         return True
 
+    for i in range(11, 13):
+        
+        if my_course[0] in classified_courses[i]:
+            my_classified_courses_credit[i] += 1
+            my_classified_courses[i].append(my_course)
+            
+            return True
+
+    if classified_courses[13] in my_course[0]:
+        my_classified_courses_credit[13] += 1
+        my_classified_courses[13].append(my_course)
+
+        return True
+
+    for i in range(len(classified_courses[14])):
+        if classified_courses[14][i] in my_course[0]:
+            my_classified_courses_credit[14] += my_course[1]
+            my_classified_courses[14].append(my_course)
+            
+            return True
+
+    if my_course[0] in classified_courses[15]:
+        my_classified_courses_credit[15] += my_course[1]
+        my_classified_courses[15].append(my_course)
+        
+        return True
+
     return False
 
 def load_category():
@@ -126,7 +153,8 @@ classified_course = [0.core_math1,
         4.core_english1, 5.core_english2,
         6.core_writing,
         7.HUS, 8.PPE, 9.GSC,
-        10.freshman_seminar]
+        10.freshman_seminar, 11.exercise, 12.music,
+        13.colloquium, 14.research, -3.Others1]
 """
 classified_courses = [['GS1001', 'GS1011'],
         ['GS1002', 'GS2001', 'GS2002', 'GS2004', 'GS2013'],
@@ -135,18 +163,26 @@ classified_courses = [['GS1001', 'GS1011'],
         ['GS1601', 'GS1603'], ['GS1604', 'GS2652'], 
         ['GS1511', 'GS1512', 'GS1513', 
             'GS1531', 'GS1532', 'GS1533', 'GS1534']]
-classified_courses_credit = [3, 3, 9, 3, 2, 2, 3, 6, 6, 12, 1, 12, '-']
+classified_courses_credit = [3, 3, 9, 3, 2, 2, 3, 6, 
+        6, 12, 1, 4, 4, 2, 6, '-', 12, '-']
 courses_text = ['Mandatory', 'Mandatory', 'Mandatory', 
         'Mandatory (2 or 3)', 'Mandatory', 'Mandatory', 'Mandatory',
         'Mandatory', 'Mandatory', 'Mandatory', 'Mandatory',
-        'Optional', '']
+        'Mandatory', 'Mandatory', 'Mandatory', 'Mandatory',
+        'Optional', 'Optional', '']
 courses_name = ['Core Mathematics 1', 'Core Mathematics 2',
         'Core Science', 'Core Experiment', 'Core English 1',
         'Core English 2', 'Core Writing', 'HUS', 'PPE',
         'Remaining Core Humanities', 'Freshman Seminar',
-        'Others2', 'Others3']
+        'Exercise', 'Music', 'Colloquium', 'Paper Research', 
+        'Others1', 'Others2', 'Others3']
 load_category()
-classified_courses.append(['GS9301', 'GS1901'])
+classified_courses += [['GS9301', 'GS1901'], 
+        ['GS01' + str(idx).zfill(2) for idx in range(1, 15)],
+        ['GS02' + str(idx).zfill(2) for idx in range(1, 13)],
+        '9331', ['9102', '9103', '9104'],
+        ['UC0201', 'UC0202', 'UC0203', 'UC0301', 'UC0901']]
+classified_courses_num = 18
 
 """
 classified_course = [0.core_math1,
@@ -155,12 +191,14 @@ classified_course = [0.core_math1,
         4.core_english1, 5.core_english2,
         6.core_writing,
         7.HUS, 8.PPE, 9.GSC, 10.freshman_seminar,
-        -2.others2, -1.others3]
+        11.exercise, 12.music, 13.colloquium, 14.research, 
+        -3.others1, -2.others2, -1.others3]
 """
 
-my_classified_courses = [[] for i in range(13)]
-my_classified_courses_credit = [0 for i in range(13)]
+my_classified_courses = [[] for i in range(classified_courses_num)]
+my_classified_courses_credit = [0 for i in range(classified_courses_num)]
 my_nonclassified_courses = []
+
 
 # my_courses = list of (code, credit, title)
 my_courses = get_my_courses()
@@ -179,7 +217,7 @@ if __name__ == "__main__":
         if not classify_my_course(my_course_index):
             my_nonclassified_courses.append(my_courses[my_course_index])
 
-    for index in range(13):
+    for index in range(classified_courses_num):
         print_courses_by_index(index)
 
     print("\nmy nonclassified courses\n")
