@@ -220,5 +220,10 @@ if __name__ == "__main__":
     for index in range(classified_courses_num):
         print_courses_by_index(index)
 
+    print('-' * 75)
+    print('{:7} {:<7}'.format(" ", 
+        str(sum(my_classified_courses_credit)) + "/-"))
+    print('-' * 75)
+    
     print("\nmy nonclassified courses\n")
     print_courses(my_nonclassified_courses)
