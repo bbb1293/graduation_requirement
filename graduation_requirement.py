@@ -26,179 +26,311 @@ def get_my_courses():
 
     return ret
 
+def load_category():
+    
+    category = {}
+
+    with open("./data.csv", 'r') as csvfile:
+        csvreader = csv.reader(csvfile)
+
+        for row in csvreader:
+            category[row[0]] = row[1:]
+
+    return category
+
+
 def classify_my_course(my_course_index):
 
     # my_course = (code, credit, title)
     my_course = my_courses[my_course_index]
     
-    for i in range(7):
+    for category in ["core_english1", "core_english2", "core_math1",
+            "core_experiment", "freshman_seminar",
+            "others1", "others3"]:
+        
+        if my_course[0] in classified_courses[category]:
+            my_classified_courses_credit[category] += my_course[1]
+            my_classified_courses[category].append(my_course)
 
-        if my_course[0] in classified_courses[i]:
+            return True
+    
+    for category in ["core_writing", "core_math2", "core_science"]:
 
-            if my_course[1] + my_classified_courses_credit[i] > \
-                    classified_courses_credit[i]:
-                my_classified_courses_credit[-1] += my_course[1]
-                my_classified_courses[-1].append(my_course) 
+        if my_course[0] in classified_courses[category]:
+
+            if my_course[1] + my_classified_courses_credit[category] >\
+                    classified_courses_credit[category]:
+                my_classified_courses_credit["others3"] += my_course[1]
+                my_classified_courses["others3"].append(my_course) 
 
             else:
-                my_classified_courses_credit[i] += my_course[1]
-                my_classified_courses[i].append(my_course)
+                my_classified_courses_credit[category] += my_course[1]
+                my_classified_courses[category].append(my_course)
 
             return True
 
-    for i in range(7, 9):
+    if my_course[0] in classified_courses["other_humanity"]:
         
-        if my_course[0] in classified_courses[i]:
-
-            if my_course[1] + my_classified_courses_credit[i] > \
-                    classified_courses_credit[i]:
-                
-                if my_course[1] + my_classified_courses_credit[9] > \
-                        classified_courses_credit[9]:
-                    my_classified_courses_credit[-2] = \
-                            min(my_classified_courses_credit[-2] + \
-                            my_course[1], classified_courses_credit[-2])
-                    my_classified_courses[-2].append(my_course)
-
-                else:
-                    my_classified_courses_credit[9] += my_course[1]
-                    my_classified_courses[9].append(my_course)
-
-            else:
-                my_classified_courses_credit[i] += my_course[1]
-                my_classified_courses[i].append(my_course)
-
-            return True
-
-    if my_course[0] in classified_courses[9]:
-        
-        if my_course[1] + my_classified_courses_credit[9] > \
-                    classified_courses_credit[9]:
-            my_classified_courses_credit[-2] = \
-                    min(my_classified_courses_credit[-2] + \
-                    my_course[1], classified_courses_credit[-2])
-            my_classified_courses[-2].append(my_course)
+        if my_course[1] +\
+                my_classified_courses_credit["other_humanity"] >\
+                classified_courses_credit["other_humanity"]:
+            my_classified_courses_credit["others2"] += my_course[1]
+            my_classified_courses["others2"].append(my_course)
 
         else:
-            my_classified_courses_credit[9] += my_course[1]
-            my_classified_courses[9].append(my_course)
+            my_classified_courses_credit["other_humanity"] +=\
+                    my_course[1]
+            my_classified_courses["other_humanity"].append(my_course)
 
         return True
 
-    if my_course[0] in classified_courses[10]:
-        my_classified_courses_credit[10] += my_course[1]
-        my_classified_courses[10].append(my_course)
-
-        return True
-
-    for i in range(11, 13):
+    for category in ["HUS", "PPE"]:
         
-        if my_course[0] in classified_courses[i]:
-            my_classified_courses_credit[i] += 1
-            my_classified_courses[i].append(my_course)
-            
+        if my_course[0] in classified_courses[category]:
+
+            if my_course[1] + my_classified_courses_credit[category] >\
+                    classified_courses_credit[category]:
+                
+                if my_course[1] +\
+                        my_classified_courses_credit["other_humanity"] >\
+                        classified_courses_credit["other_humanity"]:
+                    my_classified_courses_credit["others2"] = \
+                            my_classified_courses_credit["others2"] +\
+                            my_course[1]
+                    my_classified_courses["others2"].append(my_course)
+
+                else:
+                    my_classified_courses_credit["other_humanity"] +=\
+                            my_course[1]
+                    my_classified_courses["other_humanity"].append(my_course)
+
+            else:
+                my_classified_courses_credit[category] += my_course[1]
+                my_classified_courses[category].append(my_course)
+
             return True
 
-    if classified_courses[13] in my_course[0]:
-        my_classified_courses_credit[13] += 1
-        my_classified_courses[13].append(my_course)
+    # Classify my major courses
+    for classified_category, category in zip(major[my_major], 
+            ["major_core", "major_elective"]):
+        
+        if my_course[0] in classified_courses[classified_category]:
+            my_classified_courses_credit[category] += my_course[1]
+            my_classified_courses[category].append(my_course)
 
-        return True
-
-    for i in range(len(classified_courses[14])):
-        if classified_courses[14][i] in my_course[0]:
-            my_classified_courses_credit[14] += my_course[1]
-            my_classified_courses[14].append(my_course)
-            
             return True
 
-    if my_course[0] in classified_courses[15]:
-        my_classified_courses_credit[15] += my_course[1]
-        my_classified_courses[15].append(my_course)
+    # Classify other major courses
+    for classified_category in [category for sublist in major[:my_major] +\
+            major[my_major + 1:] for category in sublist]:
+
+        if my_course[0] in classified_courses[classified_category]:
+            my_classified_courses_credit["others3"] += my_course[1]
+            my_classified_courses["others3"].append(my_course)
+
+            return True
+
+    # Classify research courses
+    for code in classified_courses["research"]:
         
-        return True
+        if my_course[0][2:] == code:
+            my_classified_courses_credit["research"] += my_course[1]
+            my_classified_courses["research"].append(my_course)
+
+            return True
+
+    for category in ["music", "exercise", "colloquium"]:
+        
+        if my_course[0] in classified_courses[category]:
+            my_classified_courses_credit[category] += 1
+            my_classified_courses[category].append(my_course)
+
+            return True
 
     return False
 
-def load_category():
-    with open("./data.csv", 'r') as csvfile:
-        csvreader = csv.reader(csvfile)
+def sum_credits():
 
-        for row in csvreader:
-            classified_courses.append(row)
+    ret = 0
+
+    for category in ["core_english1", "core_english2", "core_writing",
+            "HUS", "PPE", "other_humanity", 
+            "core_math1", "core_math2",
+            "core_science", "core_experiment",
+            "freshman_seminar", "research",
+            "others2"]:
+        ret += min(my_classified_courses_credit[category],
+                classified_courses_credit[category])
+
+    ret += min(my_classified_courses_credit["major_core"] +\
+            my_classified_courses_credit["major_elective"],
+            classified_courses_credit["major"])
+    ret += (my_classified_courses_credit["others1"] +\
+            my_classified_courses_credit["others3"])
+
+    return ret
+
 
 def print_course(course):
     print('{:<7} {:<7d} {:}'.format(course[0], course[1], course[2]))
 
-def print_courses(courses):
+def print_courses_by_category(category):
+    print('\n' + '-' * 75)
+    print(courses_name[category])
+    print('-' * 75)
     print('{:<7} {:<7} {:}'.format("course", "credit", "title"))
-    for course in courses:
+
+    for course in my_classified_courses[category]:
         print_course(course)
 
-def print_courses_by_index(index):
-    print("\n" + courses_name[index])
-    print('-' * 75)
-    print_courses(my_classified_courses[index])
     print('-' * 75)
     print('{:7} {:<7} {:}'.format(" ", 
-        str(my_classified_courses_credit[index]) + "/" + \
-                str(classified_courses_credit[index]), 
-                courses_text[index]))
+        str(my_classified_courses_credit[category]) + '/' + \
+                str(classified_courses_credit[category]), 
+                courses_text[category]))
+    print('-' * 75)
+
+def print_major_courses():
+
+    print('\n' + '-' * 75)
+    print("Major")
+    print('-' * 75)
+
+    print("Major Core")
+    print('-' * 75)
+    print('{:<7} {:<7} {:}'.format("course", "credit", "title"))
+    for course in my_classified_courses["major_core"]:
+        print_course(course)
+
+    print('-' * 75)
+    print('{:7} {:<7}'.format(" ", 
+        str(my_classified_courses_credit["major_core"])))
+    print('-' * 75)
+    
+    print("Major elective")
+    print('-' * 75)
+    print('{:<7} {:<7} {:}'.format("course", "credit", "title"))
+    for course in my_classified_courses["major_elective"]:
+        print_course(course)
+
+    print('-' * 75)
+    print('{:7} {:<7}'.format(" ", 
+        str(my_classified_courses_credit["major_elective"])))
+    print('-' * 75)
+    print('{:7} {:<7} {:}'.format(" ", 
+        str(my_classified_courses_credit["major_elective"] +\
+                my_classified_courses_credit["major_core"]) + '/' +\
+                str(classified_courses_credit["major"]),
+                "Mandatory (over 30)"))
     print('-' * 75)
 
 """
-classified_course = [0.core_math1,
-        1.core_math2, 
-        2.core_science, 3.core_experiment, 
-        4.core_english1, 5.core_english2,
-        6.core_writing,
-        7.HUS, 8.PPE, 9.GSC,
-        10.freshman_seminar, 11.exercise, 12.music,
-        13.colloquium, 14.research, -3.Others1]
+classified_course = [core_english1, core_english2, core_writing,
+        HUS, PPE, other_humanity, 
+        core_math1, core_math2, core_science, core_experiment, 
+        freshman_seminar,
+        physics_core, physics_elective, 
+        chemical_core, chemical_elective, 
+        biology_core, biology_elective, 
+        eecs_core, eecs_elective, 
+        mechanics_core, mechanics_elective, 
+        environment_core, environment_elective, 
+        research, 
+        others1, others3, 
+        music, exercise, colloquium]
 """
-classified_courses = [['GS1001', 'GS1011'],
-        ['GS1002', 'GS2001', 'GS2002', 'GS2004', 'GS2013'],
-        ['GS1101', 'GS1103', 'GS1201', 'GS1203', 'GS1301', 'GS1302', 
-            'GS1303', 'GS1401'], ['GS1111', 'GS1211', 'GS1311'],
-        ['GS1601', 'GS1603'], ['GS1604', 'GS2652'], 
-        ['GS1511', 'GS1512', 'GS1513', 
-            'GS1531', 'GS1532', 'GS1533', 'GS1534']]
-classified_courses_credit = [3, 3, 9, 3, 2, 2, 3, 6, 
-        6, 12, 1, 4, 4, 2, 6, '-', 12, '-']
-courses_text = ['Mandatory', 'Mandatory', 'Mandatory', 
-        'Mandatory (2 or 3)', 'Mandatory', 'Mandatory', 'Mandatory',
-        'Mandatory', 'Mandatory', 'Mandatory', 'Mandatory',
-        'Mandatory', 'Mandatory', 'Mandatory', 'Mandatory',
-        'Optional', 'Optional', '']
-courses_name = ['Core Mathematics 1', 'Core Mathematics 2',
-        'Core Science', 'Core Experiment', 'Core English 1',
-        'Core English 2', 'Core Writing', 'HUS', 'PPE',
-        'Remaining Core Humanities', 'Freshman Seminar',
-        'Exercise', 'Music', 'Colloquium', 'Paper Research', 
-        'Others1', 'Others2', 'Others3']
-load_category()
-classified_courses += [['GS9301', 'GS1901'], 
-        ['GS01' + str(idx).zfill(2) for idx in range(1, 15)],
-        ['GS02' + str(idx).zfill(2) for idx in range(1, 13)],
-        '9331', ['9102', '9103', '9104'],
-        ['UC0201', 'UC0202', 'UC0203', 'UC0301', 'UC0901']]
-classified_courses_num = 18
+classified_courses = load_category()
+classified_courses["exercise"] = ['GS01' + str(index).zfill(2) \
+        for index in range(1, 15)]
+classified_courses["music"] = ['GS02' + str(index).zfill(2) \
+        for index in range(1, 13)]
+classified_courses["colloquium"] = ['GS9331', 'UC9331']
+classified_courses_credit = {
+        "core_english1": 2, "core_english2": 2, "core_writing": 3,
+        "HUS": 6, "PPE": 6, "other_humanity": 12, 
+        "core_math1": 3, "core_math2": 3,
+        "core_science": 9, "core_experiment": 3,
+        "freshman_seminar": 1,
+        "major": 36,
+        "research": 6,
+        "others1": '-', "others2": 12, "others3": '-',
+        "music": 4, "exercise": 4, "colloquium": 2,
+        "nonclassified_courses": '-'
+        }
+courses_text = {
+        **dict.fromkeys(
+            ["core_english1", "core_english2", "core_writing",
+            "HUS", "PPE", "other_humanity",
+            "core_math1", "core_math2", "core_science",
+            "freshman_seminar",
+            "research",
+            "music", "exercise", "colloquium"],
+            "Mandatory"),
+        **dict.fromkeys(
+            ["others1", "others2", "others3"], "Optional"),
+        "core_experiment": "Mandatory (2 or 3)",
+        "nonclassified_courses": ""
+        }
+courses_name = {
+        "core_english1": "Core English 1", 
+        "core_english2": "Core English 2",
+        "core_writing": "Core Writing", 
+        "HUS": "HUS", "PPE": "PPE",
+        "other_humanity": "Other Humanity",
+        "core_math1": "Core Mathematics 1",
+        "core_math2": "Core Mathematics 2",
+        "core_science": "Core Science",
+        "core_experiment": "Core Experiment",
+        "freshman_seminar": "Freshman Seminar",
+        "research": "Research",
+        "others1": "Others1", "others2": "Others2", "others3": "Others3",
+        "music": "Music", "exercise": "Exercise",
+        "colloquium": "Colloquium",
+        "nonclassified_courses": "Nonclassified Courses"
+        }
+major = [["physics_core", "physics_elective"],
+        ["chemical_core", "chemical_elective"],
+        ["biology_core", "biology_elective"],
+        ["eecs_core", "eecs_elective"],
+        ["mechanics_core", "mechanics_elective"],
+        ["material_core", "material_elective"],
+        ["environment_core", "environment_elective"]]
 
 """
-classified_course = [0.core_math1,
-        1.core_math2, 
-        2.core_science, 3.core_experiment, 
-        4.core_english1, 5.core_english2,
-        6.core_writing,
-        7.HUS, 8.PPE, 9.GSC, 10.freshman_seminar,
-        11.exercise, 12.music, 13.colloquium, 14.research, 
-        -3.others1, -2.others2, -1.others3]
+my_classified_course = [core_english1, core_english2, core_writing,
+        HUS, PPE, other_humanity, 
+        core_math1, core_math2, core_science, core_experiment, 
+        freshman_seminar,
+        major_core, major_elective,
+        research, 
+        others1, other2, others3, 
+        music, exercise, colloquium, nonclassified_courses]
+"""
+"""
+0: physics, 1: chemical, 2: biology, 3: eecs, 
+4: mechanics, 5: materials, 6: environment
 """
 
-my_classified_courses = [[] for i in range(classified_courses_num)]
-my_classified_courses_credit = [0 for i in range(classified_courses_num)]
-my_nonclassified_courses = []
-
+my_major = 3
+my_classified_courses = {category: [] for category in [
+    "core_english1", "core_english2", "core_writing",
+    "HUS", "PPE", "other_humanity", 
+    "core_math1", "core_math2", "core_science", "core_experiment", 
+    "freshman_seminar",
+    "major_core", "major_elective",
+    "research", 
+    "others1", "others2", "others3", 
+    "music", "exercise", "colloquium", "nonclassified_courses"]}
+my_classified_courses_credit = {
+        **dict.fromkeys(
+            ["core_english1", "core_english2", "core_writing",
+            "HUS", "PPE", "other_humanity", 
+            "core_math1", "core_math2", "core_science", "core_experiment", 
+            "freshman_seminar",
+            "major_core", "major_elective",
+            "research", 
+            "others1", "others2", "others3", 
+            "music", "exercise", "colloquium", "nonclassified_courses"], 0)}
 
 # my_courses = list of (code, credit, title)
 my_courses = get_my_courses()
@@ -211,19 +343,42 @@ if __name__ == "__main__":
 
     # data_workspace = openpyxl.load_workbook('./data.xlsx').active
     # print(categorize_course(data_workspace, 'GS', 'A', 100))
-    
+
+    print('-' * 70)
+    print("Enter the number corresponding with your major".center(70))
+    print("0: Physics, 1: Chemical, 2: Biology, 3: EECS,".center(70))
+    print("4: Mechanics, 5: Materials, 6: environment".center(70))
+    print('-' * 70)
+    my_major = int(input("\n- "))
+ 
     for my_course_index in range(len(my_courses)):
 
         if not classify_my_course(my_course_index):
-            my_nonclassified_courses.append(my_courses[my_course_index])
+            my_classified_courses_credit["nonclassified_courses"] +=\
+                    my_courses[my_course_index][1]
+            my_classified_courses["nonclassified_courses"].append(
+                    my_courses[my_course_index])
 
-    for index in range(classified_courses_num):
-        print_courses_by_index(index)
+    for category in ["core_english1", "core_english2", "core_writing",
+            "HUS", "PPE", "other_humanity",
+            "core_math1", "core_math2", "core_science", "core_experiment",
+            "freshman_seminar"]:
+        print_courses_by_category(category)
 
+    print_major_courses()
+
+    for category in ["research", "others1", "others2", "others3"]:
+        print_courses_by_category(category)
+
+    print('\n' + '-' * 75 + '\n' + '-' * 75)
+    print("Total Credits")
     print('-' * 75)
     print('{:7} {:<7}'.format(" ", 
-        str(sum(my_classified_courses_credit)) + "/-"))
-    print('-' * 75)
+        str(sum_credits()) + "/130"))
+    print('-' * 75 + '\n' + '-' * 75)
+
+    for category in ["nonclassified_courses",
+            "music", "exercise", "colloquium"]:
+        print_courses_by_category(category)
+
     
-    print("\nmy nonclassified courses\n")
-    print_courses(my_nonclassified_courses)
