@@ -64,6 +64,15 @@ def classify_my_course(my_course_index):
 
             return True
 
+    if (my_course[0] in classified_courses["HUS"] and \
+            (my_course[0] in classified_courses["PPE"] or \
+            my_course[0] in classified_courses["other_humanity"])) or \
+            (my_course[0] in classified_courses["PPE"] and \
+            my_course[0] in classified_courses["other_humanity"]):
+        my_course = list(my_course)
+        my_course[2] += " (*)"
+        my_course = tuple(my_course)
+
     for category in ["HUS", "PPE"]:
 
         if my_course[0] in classified_courses[category]:
