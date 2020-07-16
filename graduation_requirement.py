@@ -180,18 +180,19 @@ def print_courses_by_class(mclass, length = 70):
 
     print('-' * 75)
 
-    if type(classified_courses_credit[mclass]) is not int or \
+    if courses_text[mclass] == "Mandatory" and \
             classified_courses_credit[mclass] >\
             my_classified_courses_credit[mclass]:
-        print('{:7} {:<7} {:}'.format(" ",
-            str(my_classified_courses_credit[mclass]) + '/' + \
-                    str(classified_courses_credit[mclass]),
-                    courses_text[mclass]))
-    else:
         print(colored('{:7} {:<7} {:}'.format(" ",
             str(my_classified_courses_credit[mclass]) + '/' + \
                     str(classified_courses_credit[mclass]),
                     courses_text[mclass]), "red", attrs = ['bold']))
+
+    else:
+        print('{:7} {:<7} {:}'.format(" ",
+            str(my_classified_courses_credit[mclass]) + '/' + \
+                    str(classified_courses_credit[mclass]),
+                    courses_text[mclass]))
 
     print('-' * 75 + '\n')
 
@@ -211,23 +212,23 @@ def print_courses_by_subclass(subclass):
                         courses_text[subclass])
 
         if classified_courses_credit[subclass] < 2:
-            print(output_string + '\n' + '-' * 75 + '\n')
-            return
-        else:
             print(colored(output_string, "red", attrs = ['bold']) +\
                     '\n' + '-' * 75 + '\n')
+            return
+        else:
+            print(output_string + '\n' + '-' * 75 + '\n')
             return
             
     output_string = '{:7} {:<7} {:}'.format(" ",
             str(my_classified_courses_credit[subclass]) + '/' + \
                     str(classified_courses_credit[subclass]),
                     courses_text[subclass])
-    if type(classified_courses_credit[subclass]) is not int or \
+    if courses_text[subclass] == "Mandatory" and \
             classified_courses_credit[subclass] >\
             my_classified_courses_credit[subclass]:
-        print(output_string)
-    else:
         print(colored(output_string, "red", attrs = ['bold']))
+    else:
+        print(output_string)
 
     print('-' * 75 + '\n')
 
@@ -260,17 +261,15 @@ def print_major_courses():
 
     major_credit = my_classified_courses_credit["major_elective"] +\
             my_classified_courses_credit["major_core"]
+    output_string = '{:7} {:<7} {:}'.format(" ",
+            str(major_credit) + '/' + \
+                    str(classified_courses_credit["major"]),
+                    "Mandatory over 30")
     
     if major_credit < 30:
-        print('{:7} {:<7} {:}'.format(" ",
-            str(major_credit) + '/' + \
-                    str(classified_courses_credit["major"]),
-                    "Mandatory over 30"))
+        print(colored(output_string, "red", attrs = ['bold']))
     else:
-        print(colored('{:7} {:<7} {:}'.format(" ",
-            str(major_credit) + '/' + \
-                    str(classified_courses_credit["major"]),
-                    "Mandatory over 30"), "red", attrs = ['bold']))
+        print(output_string)
 
     print('-' * 75 + '\n')
 
