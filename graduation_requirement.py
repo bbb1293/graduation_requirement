@@ -1,11 +1,14 @@
 #@title
 #-*- coding:utf-8 -*-
 
+print("Loading related libraries...", flush=True)
 import sys, io
 import openpyxl, csv
 from termcolor import colored
+print("Done", flush=True)
 
 def get_my_courses():
+    print("Getting your courses...", flush=True)
     ws = openpyxl.load_workbook('Completed course grade.xlsx').active
 
     index = 6
@@ -27,21 +30,9 @@ def get_my_courses():
         index += 1
 
     ret.sort(key=lambda x: x[1], reverse=True)
+    print("Done", flush=True)
     
     return ret
-
-def load_category():
-
-    category = {}
-
-    with open('./data.csv', 'r') as csvfile:
-        csvreader = csv.reader(csvfile)
-
-        for row in csvreader:
-            category[row[0]] = row[1:]
-
-    return category
-
 
 def classify_my_course(my_course_index):
 
@@ -298,12 +289,40 @@ classified_course = [core_english1, core_english2, core_writing,
         others1, others3,
         music, exercise, colloquium]
 """
-classified_courses = load_category()
-classified_courses["exercise"] = ['GS01' + str(index).zfill(2) \
-        for index in range(1, 15)]
-classified_courses["music"] = ['GS02' + str(index).zfill(2) \
-        for index in range(1, 13)]
-classified_courses["colloquium"] = ['GS9331', 'UC9331']
+classified_courses = {
+        'core_math1': ['GS1001', 'GS1011'],
+        'core_math2': ['GS1002', 'GS2001', 'GS2002', 'GS2004', 'GS2013'],
+        'core_science': ['GS1101', 'GS1103', 'GS1201', 'GS1203', 'GS1301', 'GS1302', 'GS1303', 'GS1401'],
+        'core_experiment': ['GS1111', 'GS1211', 'GS1311'],
+        'core_english1': ['GS1601', 'GS1603'],
+        'core_english2': ['GS1604', 'GS2652'],
+        'core_writing': ['GS1511', 'GS1512', 'GS1513', 'GS1531', 'GS1532', 'GS1533', 'GS1534'],
+        'freshman_seminar': ['GS1901', 'GS9301'],
+        'HUS': ['GS2501', 'GS2503', 'GS2504', 'GS2505', 'GS2506', 'GS2507', 'GS2508', 'GS2509', 'GS2510', 'GS2511', 'GS2512', 'GS2521', 'GS2522', 'GS2523', 'GS2524', 'GS2525', 'GS2526', 'GS2544', 'GS2601', 'GS2602', 'GS2603', 'GS2604', 'GS2611', 'GS2612', 'GS2613', 'GS2614', 'GS2615', 'GS2616', 'GS2618', 'GS2621', 'GS2622', 'GS2623', 'GS2625', 'GS2626', 'GS2627', 'GS2628', 'GS2629', 'GS2630', 'GS2814', 'GS3501', 'GS3502', 'GS3504', 'GS3601', 'GS3602', 'GS3603', 'GS3604', 'GS3621', 'GS3622', 'GS3623', 'GS3624', 'GS3625', 'GS3626', 'GS3662', 'GS3801', 'GS3802', 'GS3803', 'GS3901'],
+        'PPE': ['GS2620', 'GS2661', 'GS2701', 'GS2702', 'GS2703', 'GS2704', 'GS2705', 'GS2706', 'GS2707', 'GS2708', 'GS2709', 'GS2724', 'GS2725', 'GS2726', 'GS2727', 'GS2728', 'GS2729', 'GS2730', 'GS2731', 'GS2732', 'GS2733', 'GS2734', 'GS2735', 'GS2736', 'GS2742', 'GS2743', 'GS2747', 'GS2748', 'GS2750', 'GS2751', 'GS2752', 'GS2761', 'GS2762', 'GS2763', 'GS2764', 'GS2765', 'GS2766', 'GS2781', 'GS2782', 'GS2783', 'GS2784', 'GS2785', 'GS2786', 'GS2787', 'GS2788', 'GS2803', 'GS2812', 'GS2831', 'GS2832', 'GS2833', 'GS2834', 'GS2835', 'GS3631', 'GS3632', 'GS3633', 'GS3661', 'GS3663', 'GS3721', 'GS3751', 'GS3752', 'GS3753', 'GS3761', 'GS3762', 'GS3763', 'GS3764', 'GS3861', 'GS4741', 'GS4761', 'GS4762'],
+        'other_humanity': ['GS2541', 'GS2542', 'GS2543', 'GS2544', 'GS2601', 'GS2602', 'GS2603', 'GS2791', 'GS2792', 'GS2793', 'GS2804', 'GS2808', 'GS2810', 'GS2815', 'GS2816', 'GS2817', 'GS2818', 'GS2819', 'GS2821', 'GS2822', 'GS2911', 'GS2912', 'GS2913', 'GS2931', 'GS2932', 'GS2933', 'GS3566', 'GS3601', 'GS3602', 'GS3901'],
+        'others3': ['BS2101', 'BS2102', 'CH2102', 'CH2103', 'CT2501', 'CT2502', 'CT2503', 'CT2504', 'CT2505', 'CT2506', 'CT4101', 'CT41__', 'CT4201', 'CT4301', 'CT4302', 'CT4501', 'CT4502', 'CT4503', 'CT4504', 'CT4506', 'CT45__', 'EC2201', 'EC2202', 'EC2203', 'ET2101', 'ET4102', 'ET4201', 'ET4302', 'ET4303', 'ET4304', 'ET4305', 'ET4306', 'ET4501', 'GS1102', 'GS1104', 'GS1112', 'GS1202', 'GS1204', 'GS1212', 'GS1321', 'GS1402', 'GS1431', 'GS1451', 'GS1471', 'GS1491', 'GS1605', 'GS1606', 'GS2006', 'GS2007', 'GS2102', 'GS2103', 'GS2104', 'GS2201', 'GS2202', 'GS2204', 'GS2206', 'GS2231', 'GS2302', 'GS2303', 'GS2304', 'GS2311', 'GS2401', 'GS2402', 'GS2403', 'GS2406', 'GS2407', 'GS2408', 'GS2431', 'GS2432', 'GS2433', 'GS2434', 'GS2435', 'GS2451', 'GS2471', 'GS2472', 'GS2473', 'GS2474', 'GS2651', 'GS2653', 'GS2654', 'GS2655', 'GS2806', 'GS2809', 'GS2811', 'GS2820', 'GS2835', 'GS2836', 'GS3001', 'GS3002', 'GS3004', 'GS3006', 'GS3007', 'GS3009', 'GS3012', 'GS3015', 'GS3301', 'GS3311', 'GS3651', 'GS3804', 'GS4002', 'GS4003', 'GS4004', 'GS4005', 'GS4006', 'GS4007', 'GS4008', 'GS4009', 'GS4010', 'GS4015', 'GS4016', 'GS4017', 'GS4018', 'GS4019', 'GS4301', 'GS4471', 'GS4801', 'IR2201', 'IR2202', 'IR3201', 'IR3202', 'IR3203', 'IR3204', 'IR4201', 'IR4202', 'IR4203', 'IR4204', 'IR4205', 'IR4206', 'IR4207', 'IR4208', 'IR4209', 'MC2100', 'MC2101', 'MD2101', 'MD4101', 'MD4102', 'MD4301', 'MD4302', 'MD4303', 'MD4501', 'MD4502', 'MD4601', 'MM2001', 'MM2002', 'MM2004', 'MM2006', 'MM2007', 'MM2011', 'MM3001', 'MM3012', 'MM3015', 'MM4002', 'MM4003', 'MM4004', 'MM4005', 'MM4006', 'MM4007', 'MM4008', 'MM4009', 'MM4010', 'MM4015', 'MM4016', 'MM4017', 'MM4018', 'MM4019', 'PS2101', 'PS2102', 'biology_prerequisite', 'chemical_prerequisite', 'eecs_prerequisite', 'mechanics_prerequisite', 'others3', 'others3', 'others3', 'others3', 'others3', 'physics_prerequisite'],
+        'physics_core': ['PS2101', 'PS2102', 'PS2103', 'PS3101', 'PS3103', 'PS3104', 'PS3105', 'PS3106', 'PS3107'],
+        'physics_elective': ['PS2201', 'PS2202', 'PS3201', 'PS3202', 'PS3203', 'PS3205', 'PS3206', 'PS4202', 'PS4203', 'PS4204', 'PS4205', 'PS4206', 'PS4207', 'PS4208', 'PS4209', 'PS4210', 'PS4211', 'PS4212', 'PS4213', 'PS4214', 'PS4215', 'PS4216'],
+        'chemical_core': ['CH2101', 'CH2102', 'CH2103', 'CH2104', 'CH2105', 'CH3102', 'CH3103', 'CH3104', 'CH3105', 'CH3106', 'CH3107', 'CM3102', 'CM3103', 'CM3104', 'CM3105', 'CM3106', 'chemical_core'],
+        'chemical_elective': ['CH2106', 'CH2201', 'CH3202', 'CH3204', 'CH3205', 'CH3207', 'CH4205', 'CH4211', 'CH4212', 'CH4213', 'CH4215', 'CH4216', 'CH4218', 'CH4219', 'CH4220', 'CH4221', 'CH4222', 'CH4223', 'CM3202', 'CM3204', 'CM3205', 'CM3206', 'CM4205', 'CM4211', 'CM4212', 'CM4213', 'CM4215', 'CM4216', 'CM4218', 'CM4219', 'chemical_elective'],
+        'biology_core': ['BS2101', 'BS2102', 'BS3101', 'BS3105', 'BS3111', 'BS3112', 'BS3113'],
+        'biology_elective': ['BS2201', 'BS3201', 'BS3202', 'BS3204', 'BS3205', 'BS4201', 'BS4202', 'BS4204', 'BS4205', 'BS4206', 'BS4207', 'BS4208', 'BS4210', 'BS4211', 'BS4212', 'BS4213', 'BS4214', 'BS4215', 'BS4216', 'BS4217', 'BS4218'],
+        'eecs_core': ['EC3101', 'EC3102'],
+        'eecs_elective': ['EC2105', 'EC2201', 'EC2202', 'EC2203', 'EC2204', 'EC2205', 'EC2206', 'EC3102', 'EC3202', 'EC3203', 'EC3204', 'EC3206', 'EC3207', 'EC3208', 'EC3212', 'EC3213', 'EC3214', 'EC3215', 'EC3216', 'EC3217', 'EC3218', 'EC4202', 'EC4203', 'EC4204', 'EC4205', 'EC4206', 'EC4207', 'EC4208', 'EC4209', 'EC4210', 'EC4211', 'EC4212', 'EC4213', 'EC4214', 'EC4215', 'EC4216', 'EC4217', 'EC4218', 'EC4219', 'EC4301', 'EC4302'],
+        'mechanics_core': ['MC2100', 'MC2101', 'MC2102', 'MC2103', 'MC3101', 'MC3102', 'MC3103', 'MC3105', 'MC3212', 'MC4101'],
+        'mechanics_elective': ['MC3201', 'MC3202', 'MC3203', 'MC3204', 'MC3205', 'MC3206', 'MC3207', 'MC3208', 'MC3209', 'MC3210', 'MC3211', 'MC4201', 'MC4202', 'MC4203', 'MC4204', 'MC4205', 'MC4206', 'MC4207', 'MC4208', 'MC4209', 'MC4210', 'MC4211', 'MC4212', 'MC4213', 'MC4214', 'MC4215', 'MC4216', 'MC4217', 'MC4218', 'MC4219', 'MC4221'],
+        'material_core': ['MA2101', 'MA2102', 'MA2103', 'MA2104', 'MA3101', 'MA3102', 'MA3104', 'MA3105'],
+        'material_elective': ['MA2201', 'MA2202', 'MA3201', 'MA3202', 'MA3203', 'MA3204', 'MA3205', 'MA3207', 'MA3208', 'MA3209', 'MA3210', 'MA3211', 'MA4201', 'MA4202', 'MA4203', 'MA4204', 'MA4205', 'MA4206', 'MA4207', 'MA4208', 'MA4209', 'MA4210', 'MA4211', 'MA4212', 'MA4213', 'MA4214', 'MA4215', 'MA4216', 'MA4217', 'MA4218', 'MA4219', 'MA4220', 'MA4221'],
+        'environment_core': ['EV3101', 'EV3102', 'EV3103', 'EV3104', 'EV3105', 'EV3106', 'EV3111', 'EV4105', 'EV4106', 'EV4107'],
+        'environment_elective': ['EV2208', 'EV2209', 'EV2210', 'EV2211', 'EV3201', 'EV3202', 'EV3203', 'EV3204', 'EV3205', 'EV3206', 'EV3208', 'EV3213', 'EV3214', 'EV3215', 'EV3216', 'EV3217', 'EV3218', 'EV3219', 'EV3220', 'EV4201', 'EV4202', 'EV4203', 'EV4204', 'EV4205', 'EV4206', 'EV4209', 'EV4210', 'EV4211', 'EV4212', 'EV4213', 'EV4214', 'EV4215', 'EV4216', 'EV4217', 'EV4218', 'EV4221', 'EV4222', 'EV4223', 'EV4224', 'EV4225'],
+        'research': ['9102', '9103', '9104'],
+        'others1': ['UC0201', 'UC0202', 'UC0203', 'UC0301', 'UC0901'],
+        'exercise': ['GS0101', 'GS0102', 'GS0103', 'GS0104', 'GS0105', 'GS0106', 'GS0107', 'GS0108', 'GS0109', 'GS0110', 'GS0111', 'GS0112', 'GS0113', 'GS0114'],
+        'music': ['GS0201', 'GS0202', 'GS0203', 'GS0204', 'GS0205', 'GS0206', 'GS0207', 'GS0208', 'GS0209', 'GS0210', 'GS0211', 'GS0212'],
+        'colloquium': ['GS9331', 'UC9331']
+        }
+
 classified_courses_credit = {
         "core_english1": 2, "core_english2": 2, "core_writing": 3,
         "HUS": 6, "PPE": 6, "other_humanity": 12,
